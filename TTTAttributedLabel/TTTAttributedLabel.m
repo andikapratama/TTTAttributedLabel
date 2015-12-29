@@ -1841,25 +1841,32 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
 #pragma mark - Accessibility
 
 - (NSString *) accessibilityValue {
-    if ([_accessibilityValue length] == 0) {
-        switch (self.result.resultType) {
-            case NSTextCheckingTypeLink:
-                _accessibilityValue = self.result.URL.absoluteString;
-                break;
-            case NSTextCheckingTypePhoneNumber:
-                _accessibilityValue = self.result.phoneNumber;
-                break;
-            case NSTextCheckingTypeDate:
-                _accessibilityValue = [NSDateFormatter localizedStringFromDate:self.result.date
-                                                                     dateStyle:NSDateFormatterLongStyle
-                                                                     timeStyle:NSDateFormatterLongStyle];
-                break;
-            default:
-                break;
+    @try {
+        if ([_accessibilityValue length] == 0) {
+            switch (self.result.resultType) {
+                case NSTextCheckingTypeLink:
+                    _accessibilityValue = self.result.URL.absoluteString;
+                    break;
+                case NSTextCheckingTypePhoneNumber:
+                    _accessibilityValue = self.result.phoneNumber;
+                    break;
+                case NSTextCheckingTypeDate:
+                    _accessibilityValue = [NSDateFormatter localizedStringFromDate:self.result.date
+                                                                         dateStyle:NSDateFormatterLongStyle
+                                                                         timeStyle:NSDateFormatterLongStyle];
+                    break;
+                default:
+                    break;
+            }
         }
+        
     }
-    
-    return _accessibilityValue;
+    @catch (NSException *exception) {
+        _accessibilityValue = @"Error";
+    }
+    @finally {
+        return _accessibilityValue;
+    }
 }
 
 #pragma mark - NSCoding
